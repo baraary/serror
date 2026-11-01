@@ -1,0 +1,2031 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0f766e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="خطاهای سونو">
+    <title>سامانه ثبت و تحلیل خطاهای بخش‌ها در سونوگرافی</title>
+    <link rel="manifest" href="./manifest.json">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <style>
+        :root {
+            --primary: #0f766e;
+            --primary-light: #14b8a6;
+            --primary-bg: #f0fdfa;
+            --secondary: #1e293b;
+            --danger: #dc2626;
+            --danger-bg: #fef2f2;
+            --warning: #d97706;
+            --warning-bg: #fffbeb;
+            --success: #16a34a;
+            --success-bg: #f0fdf4;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Vazirmatn', Tahoma, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+
+        /* Header & Navigation */
+        header {
+            background: linear-gradient(135deg, #0f766e, #115e59);
+            color: white;
+            padding: 1rem 1.2rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .header-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .app-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        .header-chip-btn {
+            background: rgba(255, 255, 255, 0.16);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.35rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all 0.2s;
+        }
+
+        .header-chip-btn:hover {
+            background: rgba(255, 255, 255, 0.28);
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0.35rem;
+            background: rgba(255, 255, 255, 0.12);
+            padding: 0.3rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        .nav-tab {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.85);
+            border: none;
+            padding: 0.45rem 0.9rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            white-space: nowrap;
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-tab:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 1.5rem auto;
+            padding: 0 1rem;
+        }
+
+        .tab-section {
+            display: none;
+            animation: fadeIn 0.25s ease-in-out;
+        }
+
+        .tab-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards & Grid */
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--primary-bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+            position: relative;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        label .req {
+            color: var(--danger);
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="password"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.7rem 0.9rem;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: var(--text);
+            background: #fff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15);
+        }
+
+        /* Custom Searchable Dropdown (Combobox) */
+        .combo-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .selected-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .tag {
+            background: var(--primary-bg);
+            color: var(--primary);
+            border: 1px solid #99f6e4;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            color: var(--danger);
+            font-weight: bold;
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        .combo-input-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .combo-arrow {
+            position: absolute;
+            left: 10px;
+            color: var(--text-muted);
+            pointer-events: none;
+            font-size: 0.8rem;
+        }
+
+        .combo-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            left: 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            max-height: 230px;
+            overflow-y: auto;
+            z-index: 50;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .combo-dropdown.open {
+            display: block;
+        }
+
+        .combo-option {
+            padding: 0.65rem 0.9rem;
+            cursor: pointer;
+            font-size: 0.92rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.15s;
+        }
+
+        .combo-option:last-child {
+            border-bottom: none;
+        }
+
+        .combo-option:hover {
+            background: var(--primary-bg);
+        }
+
+        .combo-option.selected {
+            background: #ccfbf1;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .combo-add-new {
+            background: #f0fdf4;
+            color: var(--success);
+            font-weight: 700;
+            padding: 0.7rem 0.9rem;
+            cursor: pointer;
+            border-top: 1px dashed #86efac;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .combo-add-new:hover {
+            background: #dcfce7;
+        }
+
+        /* Dynamic Error Details Box */
+        .dynamic-fields-container {
+            background: #f8fafc;
+            border: 1.5px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 1.1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .dynamic-sub-box {
+            background: white;
+            padding: 0.9rem;
+            border-radius: 8px;
+            border-right: 4px solid var(--warning);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        /* Photo Upload Section */
+        .photo-upload-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        .photo-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.65rem 1.1rem;
+            background: var(--primary-bg);
+            color: var(--primary);
+            border: 1.5px dashed var(--primary-light);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .photo-btn:hover {
+            background: #ccfbf1;
+        }
+
+        .photo-previews {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .photo-thumb-box {
+            position: relative;
+            width: 85px;
+            height: 85px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid var(--border);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .photo-thumb-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .photo-remove-btn {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            background: rgba(220, 38, 38, 0.9);
+            color: white;
+            border: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 13px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.4rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: #115e59; }
+        .btn-secondary { background: #e2e8f0; color: var(--secondary); }
+        .btn-secondary:hover { background: #cbd5e1; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-sm { padding: 0.45rem 0.85rem; font-size: 0.82rem; border-radius: 6px; }
+
+        /* Stats & Dashboard */
+        .period-selector {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .period-btn {
+            padding: 0.45rem 1rem;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        .period-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .kpi-card {
+            background: white;
+            padding: 1.2rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            border-right: 5px solid var(--primary);
+        }
+
+        .kpi-title { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+        .kpi-value { font-size: 1.7rem; font-weight: 800; color: var(--secondary); margin-top: 0.3rem; }
+        .kpi-sub { font-size: 0.8rem; color: var(--primary); margin-top: 0.2rem; }
+
+        /* Visual Bar Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .bar-chart-row { margin-bottom: 0.85rem; }
+        .bar-chart-label { display: flex; justify-content: space-between; font-size: 0.88rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .bar-chart-track { width: 100%; height: 12px; background: #f1f5f9; border-radius: 99px; overflow: hidden; }
+        .bar-chart-fill { height: 100%; background: linear-gradient(90deg, var(--primary-light), var(--primary)); border-radius: 99px; transition: width 0.4s ease; }
+        .bar-chart-fill.error-color { background: linear-gradient(90deg, #f97316, #dc2626); }
+
+        /* Table Styles */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 0.85rem 0.75rem;
+            text-align: right;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: #f1f5f9;
+            font-weight: 700;
+            color: var(--secondary);
+            white-space: nowrap;
+        }
+
+        tr:hover { background-color: #f8fafc; }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin: 2px;
+        }
+
+        .badge-ward { background: #e0f2fe; color: #0369a1; }
+        .badge-sono { background: #f0fdfa; color: #0f766e; border: 1px solid #99f6e4; }
+        .badge-err { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+        .badge-outcome { background: #fef3c7; color: #b45309; }
+
+        /* Lightbox Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-overlay.open { display: flex; }
+
+        .modal-content {
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            max-width: 90vw;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            position: relative;
+        }
+
+        .modal-content img {
+            max-width: 100%;
+            max-height: 75vh;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        /* Toast Notification */
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--secondary);
+            color: white;
+            padding: 0.85rem 1.4rem;
+            border-radius: 10px;
+            font-weight: 600;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2);
+            transform: translateY(150%);
+            transition: transform 0.3s ease;
+            z-index: 2000;
+        }
+
+        #toast.show { transform: translateY(0); }
+
+        /* List Manager Pill */
+        .list-pill-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.7rem;
+        }
+
+        .list-pill {
+            background: #f1f5f9;
+            padding: 0.35rem 0.75rem;
+            border-radius: 99px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            border: 1px solid var(--border);
+        }
+
+        .sync-status-box {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            background: var(--primary-bg);
+            border: 1px solid #99f6e4;
+            font-size: 0.88rem;
+            color: var(--primary);
+            margin-top: 1rem;
+            display: none;
+        }
+
+        @media print {
+            header, .no-print { display: none !important; }
+            body { background: white; padding: 0; }
+            .card { box-shadow: none; border: 1px solid #ccc; }
+            .tab-section { display: block !important; }
+            #sec-form, #sec-settings { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <div class="header-top-row">
+            <div class="app-title">
+                <span>🩺</span>
+                <span>سامانه ثبت و پایش خطاهای سونوگرافی</span>
+            </div>
+            <div class="header-actions">
+                <button id="installPwaBtn" class="header-chip-btn" style="display: none;" onclick="installPWA()">
+                    📲 نصب وب‌اپ
+                </button>
+                <button class="header-chip-btn" onclick="quickGitHubSync()" title="همگام‌سازی سریع با گیت‌هاب">
+                    ☁️ <span id="headerSyncLabel">سینک گیت‌هاب</span>
+                </button>
+            </div>
+        </div>
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('sec-form', this)">📝 ثبت خطا</button>
+            <button class="nav-tab" onclick="switchTab('sec-dashboard', this)">📊 داشبورد</button>
+            <button class="nav-tab" onclick="switchTab('sec-records', this)">📋 سوابق و اکسل</button>
+            <button class="nav-tab" onclick="switchTab('sec-settings', this)">⚙️ سینک و تنظیمات</button>
+        </nav>
+    </div>
+</header>
+
+<div class="container">
+
+    <!-- ۱. بخش ثبت خطای جدید -->
+    <section id="sec-form" class="tab-section active">
+        <div class="card">
+            <div class="card-header">
+                <span id="form-title">ثبت مورد جدید</span>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="resetForm()">🔄 پاک کردن فرم / ساعت جدید</button>
+            </div>
+
+            <form id="errorForm" onsubmit="saveRecord(event)">
+                <input type="hidden" id="editRecordId" value="">
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>تاریخ (شمسی) <span class="req">*</span></label>
+                        <input type="text" id="shamsiDate" required placeholder="مثال: ۱۴۰۵/۰۸/۱۰">
+                    </div>
+
+                    <div class="form-group">
+                        <label>ساعت ثبت <span class="req">*</span></label>
+                        <input type="text" id="recordTime" required placeholder="مثال: ۰۸:۳۰">
+                    </div>
+
+                    <div class="form-group">
+                        <label>نام و نام خانوادگی بیمار <span class="req">*</span></label>
+                        <input type="text" id="patientName" required placeholder="نام بیمار را وارد کنید...">
+                    </div>
+
+                    <div class="form-group">
+                        <label>شماره پرونده / کد پذیرش (اختیاری)</label>
+                        <input type="text" id="fileNumber" placeholder="برای پیگیری مستندات...">
+                    </div>
+
+                    <div class="form-group">
+                        <label>نام بخش ارجاع‌دهنده <span class="req">*</span></label>
+                        <div class="combo-wrapper" id="combo-wards"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>نام پزشک معالج <span class="req">*</span></label>
+                        <div class="combo-wrapper" id="combo-doctors"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>نوع سونوگرافی (امکان انتخاب چند مورد) <span class="req">*</span></label>
+                        <div class="combo-wrapper" id="combo-sonos"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>نوع اشتباه بخش (امکان انتخاب چند مورد) <span class="req">*</span></label>
+                        <div class="combo-wrapper" id="combo-errors"></div>
+                    </div>
+
+                    <div class="form-group full-width" id="dynamicErrorWrapper" style="display: none;">
+                        <label style="color: var(--warning);">⚡ جزئیات اختصاصی خطای انتخاب‌شده:</label>
+                        <div class="dynamic-fields-container">
+                            <div class="dynamic-sub-box" id="box-fasting" style="display: none;">
+                                <label>مدت ناشتایی طولانی‌مدت (بر حسب ساعت)</label>
+                                <input type="number" step="0.5" min="0" id="fastingHours" placeholder="مثلاً 14">
+                            </div>
+                            <div class="dynamic-sub-box" id="box-delay" style="display: none;">
+                                <label>مدت تاخیر در انتقال بیمار (بر حسب دقیقه)</label>
+                                <input type="number" step="1" min="0" id="delayMinutes" placeholder="مثلاً 45">
+                            </div>
+                            <div class="dynamic-sub-box" id="box-history" style="display: none; grid-column: 1 / -1;">
+                                <label>شرح‌حال بیمار (اخذشده در واحد سونوگرافی به علت عدم درج در پرونده)</label>
+                                <textarea id="historyText" rows="2" placeholder="علت مراجعه، علائم بالینی یا سابقه جراحی بیمار..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>نتیجه / پیامد این خطا</label>
+                        <select id="errorOutcome">
+                            <option value="انجام با تاخیر و اتلاف وقت واحد">انجام با تاخیر و اتلاف وقت واحد</option>
+                            <option value="کنسل شدن و عودت بیمار به بخش">کنسل شدن و عودت بیمار به بخش</option>
+                            <option value="انجام بدون پرونده / مدارک قبلی">انجام بدون پرونده / مدارک قبلی</option>
+                            <option value="پیگیری تلفنی و رفع نقص در واحد">پیگیری تلفنی و رفع نقص در واحد</option>
+                            <option value="سایر موارد">سایر موارد</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>توضیحات تکمیلی (اختیاری)</label>
+                        <input type="text" id="extraNotes" placeholder="نام پرستار هماهنگ‌کننده، علت مثانه خالی یا سایر توضیحات...">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>📷 پیوست عکس مستندات (برگه درخواست، پرونده ناقص و...)</label>
+                        <div class="photo-upload-area">
+                            <label class="photo-btn">
+                                <span>📸 گرفتن عکس با دوربین</span>
+                                <input type="file" accept="image/*" capture="environment" style="display: none;" onchange="handlePhotoUpload(event)">
+                            </label>
+                            <label class="photo-btn">
+                                <span>🖼️ انتخاب عکس از گالری / سیستم</span>
+                                <input type="file" accept="image/*" multiple style="display: none;" onchange="handlePhotoUpload(event)">
+                            </label>
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">عکس‌ها به صورت خودکار فشرده و در حافظه ذخیره می‌شوند.</span>
+                        </div>
+                        <div class="photo-previews" id="formPhotoPreviews"></div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; display: flex; gap: 0.8rem; flex-wrap: wrap;">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">✅ ثبت و ذخیره در سیستم</button>
+                    <button type="button" class="btn btn-secondary" id="cancelEditBtn" style="display: none;" onclick="resetForm()">انصراف از ویرایش</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- ۲. بخش داشبورد و آمار -->
+    <section id="sec-dashboard" class="tab-section">
+        <div class="card">
+            <div class="card-header">
+                <span>📊 گزارش آماری و تحلیل خطاهای بخش‌ها</span>
+                <div class="period-selector no-print">
+                    <button class="period-btn" onclick="setStatsPeriod('daily', this)">امروز (روزانه)</button>
+                    <button class="period-btn" onclick="setStatsPeriod('weekly', this)">۷ روز اخیر (هفتگی)</button>
+                    <button class="period-btn" onclick="setStatsPeriod('monthly', this)">۳۰ روز اخیر (ماهانه)</button>
+                    <button class="period-btn active" onclick="setStatsPeriod('all', this)">کل سوابق</button>
+                    <button class="btn btn-secondary btn-sm" onclick="window.print()">🖨️ چاپ گزارش / PDF</button>
+                </div>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-title">تعداد کل موارد ثبت‌شده</div>
+                    <div class="kpi-value" id="kpi-total">۰</div>
+                    <div class="kpi-sub" id="kpi-period-label">در بازه انتخابی</div>
+                </div>
+                <div class="kpi-card" style="border-right-color: var(--danger);">
+                    <div class="kpi-title">بخش دارای بیشترین خطا</div>
+                    <div class="kpi-value" id="kpi-top-ward" style="font-size: 1.3rem;">—</div>
+                    <div class="kpi-sub" id="kpi-top-ward-count">۰ مورد</div>
+                </div>
+                <div class="kpi-card" style="border-right-color: var(--warning);">
+                    <div class="kpi-title">میانگین تاخیر انتقال بیمار</div>
+                    <div class="kpi-value" id="kpi-avg-delay">۰ دقیقه</div>
+                    <div class="kpi-sub">در موارد دارای تاخیر</div>
+                </div>
+                <div class="kpi-card" style="border-right-color: #6366f1;">
+                    <div class="kpi-title">میانگین ناشتایی طولانی‌مدت</div>
+                    <div class="kpi-value" id="kpi-avg-fasting">۰ ساعت</div>
+                    <div class="kpi-sub">در موارد ناشتایی غیرمتعارف</div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="card" style="margin-bottom: 0;">
+                    <div class="card-header">🏥 رتبه‌بندی بخش‌ها بر اساس تعداد خطا</div>
+                    <div id="chart-wards"></div>
+                </div>
+                <div class="card" style="margin-bottom: 0;">
+                    <div class="card-header">⚠️ فراوانی انواع اشتباهات رخ‌داده</div>
+                    <div id="chart-errors"></div>
+                </div>
+                <div class="card" style="margin-bottom: 0;">
+                    <div class="card-header">📌 آمار پیامدها و نتایج خطاها</div>
+                    <div id="chart-outcomes"></div>
+                </div>
+                <div class="card" style="margin-bottom: 0;">
+                    <div class="card-header">🩺 بیشترین سونوگرافی‌های دارای مشکل</div>
+                    <div id="chart-sonos"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ۳. بخش جدول سوابق و خروجی اکسل -->
+    <section id="sec-records" class="tab-section">
+        <div class="card">
+            <div class="card-header">
+                <span>📋 فهرست کامل موارد ثبت‌شده و فیلتر پیشرفته</span>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;" class="no-print">
+                    <button class="btn btn-success btn-sm" onclick="exportToExcel()">📥 دانلود خروجی اکسل (Excel)</button>
+                    <button class="btn btn-secondary btn-sm" onclick="window.print()">🖨️ چاپ جدول</button>
+                </div>
+            </div>
+
+            <div class="form-grid no-print" style="margin-bottom: 1.2rem; background: #f8fafc; padding: 1rem; border-radius: 8px;">
+                <div class="form-group">
+                    <label>بازه زمانی</label>
+                    <select id="filterPeriod" onchange="renderTable()">
+                        <option value="all">همه زمان‌ها</option>
+                        <option value="daily">امروز (روزانه)</option>
+                        <option value="weekly">۷ روز اخیر (هفتگی)</option>
+                        <option value="monthly">۳۰ روز اخیر (ماهانه)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>فیلتر بر اساس بخش</label>
+                    <select id="filterWard" onchange="renderTable()">
+                        <option value="">همه بخش‌ها</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>فیلتر بر اساس نوع اشتباه</label>
+                    <select id="filterError" onchange="renderTable()">
+                        <option value="">همه اشتباهات</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>جستجوی آزاد (نام بیمار، پزشک، تاریخ...)</label>
+                    <input type="text" id="filterSearch" oninput="renderTable()" placeholder="تایپ کنید...">
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>تاریخ و ساعت</th>
+                            <th>بیمار / پرونده</th>
+                            <th>بخش</th>
+                            <th>پزشک معالج</th>
+                            <th>نوع سونوگرافی</th>
+                            <th>نوع اشتباه</th>
+                            <th>توضیحات و مقادیر</th>
+                            <th>پیامد</th>
+                            <th>عکس</th>
+                            <th class="no-print">عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- ۴. بخش سینک ابری گیت‌هاب، پشتیبان‌گیری و مدیریت فهرست‌ها -->
+    <section id="sec-settings" class="tab-section">
+
+        <!-- کارت همگام‌سازی مستقیم با گیت‌هاب -->
+        <div class="card" style="border-right: 5px solid var(--primary);">
+            <div class="card-header">
+                <span>☁️ همگام‌سازی ابری مستقیم با گیت‌هاب (GitHub Cloud Sync)</span>
+                <span style="font-size: 0.8rem; color: var(--primary); font-weight: 600;">پشتیبان‌گیری و سینک بین گوشی و لپ‌تاپ</span>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;">
+                با وارد کردن توکن گیت‌هاب (Personal Access Token)، تمام رکوردها و فهرست‌های شما در یک فایل <code>data/sonography-db.json</code> داخل مخزن گیت‌هاب ذخیره و همگام‌سازی می‌شوند. (توکن فقط در حافظه مرورگر خودتان ذخیره می‌شود).
+            </p>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>نام کاربری و مخزن (Owner/Repo)</label>
+                    <input type="text" id="ghRepo" dir="ltr" placeholder="username/sonography-errors">
+                </div>
+                <div class="form-group">
+                    <label>توکن دسترسی گیت‌هاب (GitHub Token - Classic/Fine-grained)</label>
+                    <input type="password" id="ghToken" dir="ltr" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+                </div>
+                <div class="form-group">
+                    <label>نام شاخه (Branch) و مسیر فایل</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="text" id="ghBranch" dir="ltr" value="main" style="width: 35%;" placeholder="main">
+                        <input type="text" id="ghFilePath" dir="ltr" value="data/sonography-db.json" style="width: 65%;" placeholder="data/sonography-db.json">
+                    </div>
+                </div>
+                <div class="form-group" style="justify-content: center;">
+                    <label style="cursor: pointer; user-select: none; margin-top: 1.4rem;">
+                        <input type="checkbox" id="ghAutoSync" onchange="saveGitHubConfig()" style="width: 18px; height: 18px;">
+                        <span>همگام‌سازی خودکار در پس‌زمینه پس از هر ثبت یا ویرایش</span>
+                    </label>
+                </div>
+            </div>
+
+            <div style="margin-top: 1.2rem; display: flex; gap: 0.7rem; flex-wrap: wrap;">
+                <button class="btn btn-primary btn-sm" onclick="saveGitHubConfig(true)">💾 ذخیره تنظیمات گیت‌هاب</button>
+                <button class="btn btn-success btn-sm" onclick="syncWithGitHub('smart')">🔄 همگام‌سازی هوشمند (ادغام و ذخیره در گیت‌هاب)</button>
+                <button class="btn btn-secondary btn-sm" onclick="syncWithGitHub('push')">⬆️ ارسال اجباری به گیت‌هاب (Push)</button>
+                <button class="btn btn-secondary btn-sm" onclick="syncWithGitHub('pull')">⬇️ دریافت از گیت‌هاب (Pull)</button>
+            </div>
+            <div id="syncStatusBox" class="sync-status-box"></div>
+        </div>
+
+        <!-- کارت پشتیبان‌گیری فایلی (برای انتقال از Tiiny.host) -->
+        <div class="card">
+            <div class="card-header">💾 پشتیبان‌گیری و انتقال فایل (مناسب انتقال از Tiiny.host)</div>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
+                برای انتقال اطلاعات از Tiiny.host به گیت‌هاب: ابتدا در سایت قبلی دکمه «دانلود فایل پشتیبان» را بزنید و سپس در لینک گیت‌هاب دکمه «بازیابی و ادغام از فایل پشتیبان» را انتخاب کنید.
+            </p>
+            <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+                <button class="btn btn-primary btn-sm" onclick="downloadBackup()">⬇️ دانلود فایل پشتیبان (.json)</button>
+                <label class="btn btn-secondary btn-sm" style="cursor: pointer;">
+                    ⬆️ بازیابی و ادغام از فایل پشتیبان
+                    <input type="file" accept=".json" style="display: none;" onchange="restoreBackup(event)">
+                </label>
+            </div>
+        </div>
+
+        <!-- کارت مدیریت فهرست‌ها -->
+        <div class="card">
+            <div class="card-header">⚙️ مدیریت و ویرایش گزینه‌های دراپ‌داون</div>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;">
+                اگر موردی را هنگام ثبت به صورت دستی با غلط املایی اضافه کرده‌اید، از این بخش می‌توانید آن را حذف کنید.
+            </p>
+            <div class="form-grid">
+                <div>
+                    <label>🏥 فهرست بخش‌ها</label>
+                    <div class="list-pill-container" id="manage-wards"></div>
+                </div>
+                <div>
+                    <label>🩺 فهرست سونوگرافی‌ها</label>
+                    <div class="list-pill-container" id="manage-sonos"></div>
+                </div>
+                <div>
+                    <label>⚠️ فهرست اشتباهات</label>
+                    <div class="list-pill-container" id="manage-errors"></div>
+                </div>
+                <div>
+                    <label>👨‍⚕️ فهرست پزشکان معالج</label>
+                    <div class="list-pill-container" id="manage-doctors"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- مودال نمایش بزرگ‌نمایی عکس -->
+<div class="modal-overlay" id="photoModal" onclick="closePhotoModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <strong id="modalCaption" style="font-size: 0.95rem;">تصویر پیوست</strong>
+            <button class="btn btn-danger btn-sm" onclick="closePhotoModal()">بستن ✕</button>
+        </div>
+        <img id="modalImage" src="" alt="تصویر مستندات">
+    </div>
+</div>
+
+<div id="toast">عملیات با موفقیت انجام شد</div>
+
+<script>
+    /**************************************************************
+     * ۰. ثبت Service Worker و نصب PWA
+     **************************************************************/
+    let deferredPwaPrompt = null;
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js').catch(() => {});
+        });
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPwaPrompt = e;
+        document.getElementById('installPwaBtn').style.display = 'inline-flex';
+    });
+
+    async function installPWA() {
+        if (!deferredPwaPrompt) return;
+        deferredPwaPrompt.prompt();
+        const { outcome } = await deferredPwaPrompt.userChoice;
+        if (outcome === 'accepted') {
+            document.getElementById('installPwaBtn').style.display = 'none';
+        }
+        deferredPwaPrompt = null;
+    }
+
+    /**************************************************************
+     * ۱. مقادیر پیش‌فرض و مدیریت دیتابیس (IndexedDB + LocalStorage)
+     **************************************************************/
+    const DEFAULT_LISTS = {
+        wards: [
+            "ICU", "CCU", "اطفال", "اورژانس", "بخش ۱", "بخش ۲", "بخش ۳", "بخش ۴",
+            "پست CCU", "پست CCU ستاره‌دار", "درمانگاه", "زایشگاه", "نوزادان"
+        ],
+        sonos: [
+            "بارداری", "تیروئید", "داپلر کلیه", "شریان اندام تحتانی", "شریانی وریدی اندام تحتانی",
+            "شکم و لگن", "عروق شکمی", "کاروتید", "کلیه و مجاری ادراری", "ورید اندام تحتانی"
+        ],
+        errors: [
+            "تاخیر در انتقال بیمار", "عدم نوشتن شرح‌حال", "مثانه خالی",
+            "ناشتایی طولانی مدت", "نیاوردن پرونده"
+        ],
+        doctors: []
+    };
+
+    let appLists = { wards: [], sonos: [], errors: [], doctors: [] };
+    let allRecords = [];
+    let currentFormPhotos = [];
+    let currentStatsPeriod = 'all';
+    let comboboxInstances = {};
+
+    const DB_NAME = 'SonographyErrorTrackerDB';
+    const DB_VERSION = 1;
+    let db;
+
+    function initDB() {
+        return new Promise((resolve, reject) => {
+            const req = indexedDB.open(DB_NAME, DB_VERSION);
+            req.onupgradeneeded = (e) => {
+                const database = e.target.result;
+                if (!database.objectStoreNames.contains('records')) {
+                    database.createObjectStore('records', { keyPath: 'id' });
+                }
+            };
+            req.onsuccess = (e) => {
+                db = e.target.result;
+                resolve(db);
+            };
+            req.onerror = (e) => reject(e);
+        });
+    }
+
+    async function loadAllRecordsFromDB() {
+        return new Promise((resolve) => {
+            const tx = db.transaction('records', 'readonly');
+            const store = tx.objectStore('records');
+            const req = store.getAll();
+            req.onsuccess = () => {
+                allRecords = (req.result || []).sort((a, b) => b.timestamp - a.timestamp);
+                resolve(allRecords);
+            };
+        });
+    }
+
+    async function putRecordInDB(record) {
+        return new Promise((resolve) => {
+            const tx = db.transaction('records', 'readwrite');
+            tx.objectStore('records').put(record);
+            tx.oncomplete = () => resolve();
+        });
+    }
+
+    async function deleteRecordFromDB(id) {
+        return new Promise((resolve) => {
+            const tx = db.transaction('records', 'readwrite');
+            tx.objectStore('records').delete(id);
+            tx.oncomplete = () => resolve();
+        });
+    }
+
+    function loadLists() {
+        const saved = localStorage.getItem('sono_app_lists');
+        if (saved) {
+            appLists = JSON.parse(saved);
+        } else {
+            appLists = JSON.parse(JSON.stringify(DEFAULT_LISTS));
+        }
+        sortAllLists();
+    }
+
+    function saveLists() {
+        sortAllLists();
+        localStorage.setItem('sono_app_lists', JSON.stringify(appLists));
+        populateFilterDropdowns();
+        renderListManager();
+    }
+
+    function sortAllLists() {
+        for (let key in appLists) {
+            appLists[key] = [...new Set(appLists[key])].sort((a, b) => a.localeCompare(b, 'fa'));
+        }
+    }
+
+    /**************************************************************
+     * ۲. کامپوننت دراپ‌داون هوشمند (جستجو، الفبایی، افزودن خودکار)
+     **************************************************************/
+    class SmartCombobox {
+        constructor(containerId, listKey, isMulti = false, placeholder = 'جستجو یا انتخاب کنید...', onChangeCallback = null) {
+            this.container = document.getElementById(containerId);
+            this.listKey = listKey;
+            this.isMulti = isMulti;
+            this.placeholder = placeholder;
+            this.onChangeCallback = onChangeCallback;
+            this.selected = isMulti ? [] : '';
+            this.renderBase();
+        }
+
+        renderBase() {
+            this.container.innerHTML = `
+                ${this.isMulti ? `<div class="selected-tags"></div>` : ''}
+                <div class="combo-input-box">
+                    <input type="text" class="combo-input" placeholder="${this.placeholder}" autocomplete="off">
+                    <span class="combo-arrow">▼</span>
+                </div>
+                <div class="combo-dropdown"></div>
+            `;
+            this.input = this.container.querySelector('.combo-input');
+            this.dropdown = this.container.querySelector('.combo-dropdown');
+            this.tagsContainer = this.container.querySelector('.selected-tags');
+
+            this.input.addEventListener('focus', () => {
+                this.renderOptions(this.input.value);
+                this.dropdown.classList.add('open');
+            });
+
+            this.input.addEventListener('input', () => {
+                if (!this.isMulti) {
+                    this.selected = this.input.value.trim();
+                }
+                this.renderOptions(this.input.value);
+                this.dropdown.classList.add('open');
+            });
+
+            this.input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const val = this.input.value.trim();
+                    if (val) {
+                        this.selectOrAddItem(val);
+                    }
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!this.container.contains(e.target)) {
+                    this.dropdown.classList.remove('open');
+                    if (!this.isMulti && this.input.value.trim()) {
+                        this.ensureInList(this.input.value.trim());
+                        this.selected = this.input.value.trim();
+                    }
+                }
+            });
+        }
+
+        ensureInList(val) {
+            if (!val) return;
+            if (!appLists[this.listKey].includes(val)) {
+                appLists[this.listKey].push(val);
+                saveLists();
+                showToast(`«${val}» به فهرست دائمی اضافه شد`);
+            }
+        }
+
+        selectOrAddItem(val) {
+            this.ensureInList(val);
+            if (this.isMulti) {
+                if (!this.selected.includes(val)) {
+                    this.selected.push(val);
+                } else {
+                    this.selected = this.selected.filter(i => i !== val);
+                }
+                this.input.value = '';
+                this.renderTags();
+                this.renderOptions('');
+            } else {
+                this.selected = val;
+                this.input.value = val;
+                this.dropdown.classList.remove('open');
+            }
+            if (this.onChangeCallback) this.onChangeCallback(this.selected);
+        }
+
+        renderTags() {
+            if (!this.isMulti) return;
+            this.tagsContainer.innerHTML = this.selected.map(item => `
+                <span class="tag">
+                    ${item}
+                    <span class="tag-remove" onclick="comboboxInstances['${this.listKey}'].removeTag('${item.replace(/'/g, "\\'")}')">×</span>
+                </span>
+            `).join('');
+        }
+
+        removeTag(item) {
+            this.selected = this.selected.filter(i => i !== item);
+            this.renderTags();
+            this.renderOptions(this.input.value);
+            if (this.onChangeCallback) this.onChangeCallback(this.selected);
+        }
+
+        renderOptions(filterText = '') {
+            const q = filterText.trim();
+            const items = appLists[this.listKey].filter(item => item.includes(q));
+            let html = '';
+
+            items.forEach(item => {
+                const isSel = this.isMulti ? this.selected.includes(item) : (this.selected === item);
+                html += `
+                    <div class="combo-option ${isSel ? 'selected' : ''}" onclick="comboboxInstances['${this.listKey}'].selectOrAddItem('${item.replace(/'/g, "\\'")}')">
+                        <span>${item}</span>
+                        ${isSel ? '<span>✓</span>' : ''}
+                    </div>
+                `;
+            });
+
+            if (q && !appLists[this.listKey].includes(q)) {
+                html += `
+                    <div class="combo-add-new" onclick="comboboxInstances['${this.listKey}'].selectOrAddItem('${q.replace(/'/g, "\\'")}')">
+                        <span>➕ افزودن خودکار «${q}» به فهرست</span>
+                    </div>
+                `;
+            }
+
+            if (!html) {
+                html = `<div style="padding:0.7rem; color:var(--text-muted); font-size:0.85rem;">موردی یافت نشد. نام جدید را تایپ کنید...</div>`;
+            }
+
+            this.dropdown.innerHTML = html;
+        }
+
+        setValue(val) {
+            if (this.isMulti) {
+                this.selected = Array.isArray(val) ? [...val] : [];
+                this.input.value = '';
+                this.renderTags();
+            } else {
+                this.selected = val || '';
+                this.input.value = val || '';
+            }
+            if (this.onChangeCallback) this.onChangeCallback(this.selected);
+        }
+
+        getValue() {
+            if (!this.isMulti && this.input.value.trim()) {
+                const v = this.input.value.trim();
+                this.ensureInList(v);
+                return v;
+            }
+            return this.selected;
+        }
+    }
+
+    /**************************************************************
+     * ۳. مدیریت فیلدهای پویا، تاریخ شمسی و فشرده‌سازی عکس
+     **************************************************************/
+    function updateDynamicErrorFields(selectedErrors) {
+        const wrapper = document.getElementById('dynamicErrorWrapper');
+        const boxFasting = document.getElementById('box-fasting');
+        const boxDelay = document.getElementById('box-delay');
+        const boxHistory = document.getElementById('box-history');
+
+        const hasFasting = selectedErrors.includes('ناشتایی طولانی مدت');
+        const hasDelay = selectedErrors.includes('تاخیر در انتقال بیمار');
+        const hasHistory = selectedErrors.includes('عدم نوشتن شرح‌حال');
+
+        boxFasting.style.display = hasFasting ? 'block' : 'none';
+        boxDelay.style.display = hasDelay ? 'block' : 'none';
+        boxHistory.style.display = hasHistory ? 'block' : 'none';
+
+        if (!hasFasting) document.getElementById('fastingHours').value = '';
+        if (!hasDelay) document.getElementById('delayMinutes').value = '';
+        if (!hasHistory) document.getElementById('historyText').value = '';
+
+        wrapper.style.display = (hasFasting || hasDelay || hasHistory) ? 'flex' : 'none';
+    }
+
+    function setNowDateTime() {
+        const now = new Date();
+        const shamsi = new Intl.DateTimeFormat('fa-IR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        }).format(now);
+        const time = new Intl.DateTimeFormat('fa-IR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        }).format(now);
+
+        document.getElementById('shamsiDate').value = shamsi;
+        document.getElementById('recordTime').value = time;
+    }
+
+    function handlePhotoUpload(event) {
+        const files = Array.from(event.target.files);
+        if (!files.length) return;
+
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const maxDim = 1000;
+                    let w = img.width;
+                    let h = img.height;
+
+                    if (w > h && w > maxDim) {
+                        h *= maxDim / w;
+                        w = maxDim;
+                    } else if (h > maxDim) {
+                        w *= maxDim / h;
+                        h = maxDim;
+                    }
+
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.72);
+                    currentFormPhotos.push(compressedDataUrl);
+                    renderFormPhotoPreviews();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+        event.target.value = '';
+    }
+
+    function renderFormPhotoPreviews() {
+        const container = document.getElementById('formPhotoPreviews');
+        container.innerHTML = currentFormPhotos.map((src, idx) => `
+            <div class="photo-thumb-box">
+                <img src="${src}" onclick="openPhotoModal('${src}', 'پیش‌نمایش تصویر')" alt="photo">
+                <button type="button" class="photo-remove-btn" onclick="removeFormPhoto(${idx})">×</button>
+            </div>
+        `).join('');
+    }
+
+    function removeFormPhoto(idx) {
+        currentFormPhotos.splice(idx, 1);
+        renderFormPhotoPreviews();
+    }
+
+    /**************************************************************
+     * ۴. ثبت، ویرایش و حذف رکوردها
+     **************************************************************/
+    async function saveRecord(e) {
+        e.preventDefault();
+
+        const ward = comboboxInstances.wards.getValue();
+        const doctor = comboboxInstances.doctors.getValue();
+        const sonos = comboboxInstances.sonos.getValue();
+        const errors = comboboxInstances.errors.getValue();
+
+        if (!ward) return alert('لطفاً نام بخش را انتخاب یا وارد کنید.');
+        if (!doctor) return alert('لطفاً نام پزشک معالج را انتخاب یا وارد کنید.');
+        if (!sonos.length) return alert('لطفاً حداقل یک نوع سونوگرافی را انتخاب کنید.');
+        if (!errors.length) return alert('لطفاً حداقل یک نوع اشتباه را انتخاب کنید.');
+
+        const editId = document.getElementById('editRecordId').value;
+        const existingRecord = editId ? allRecords.find(r => r.id === editId) : null;
+
+        const record = {
+            id: editId || ('rec_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5)),
+            timestamp: existingRecord ? existingRecord.timestamp : Date.now(),
+            updatedAt: Date.now(),
+            shamsiDate: document.getElementById('shamsiDate').value.trim(),
+            recordTime: document.getElementById('recordTime').value.trim(),
+            patientName: document.getElementById('patientName').value.trim(),
+            fileNumber: document.getElementById('fileNumber').value.trim(),
+            ward: ward,
+            doctor: doctor,
+            sonos: sonos,
+            errors: errors,
+            fastingHours: document.getElementById('fastingHours').value ? parseFloat(document.getElementById('fastingHours').value) : null,
+            delayMinutes: document.getElementById('delayMinutes').value ? parseFloat(document.getElementById('delayMinutes').value) : null,
+            historyText: document.getElementById('historyText').value.trim(),
+            outcome: document.getElementById('errorOutcome').value,
+            extraNotes: document.getElementById('extraNotes').value.trim(),
+            photos: [...currentFormPhotos]
+        };
+
+        await putRecordInDB(record);
+        await loadAllRecordsFromDB();
+
+        showToast(editId ? 'رکورد با موفقیت ویرایش شد' : 'خطای بخش با موفقیت ثبت شد');
+        resetForm();
+        renderTable();
+        renderDashboard();
+        triggerAutoSyncIfNeeded();
+    }
+
+    function resetForm() {
+        document.getElementById('errorForm').reset();
+        document.getElementById('editRecordId').value = '';
+        document.getElementById('form-title').innerText = 'ثبت مورد جدید';
+        document.getElementById('submitBtn').innerText = '✅ ثبت و ذخیره در سیستم';
+        document.getElementById('cancelEditBtn').style.display = 'none';
+
+        comboboxInstances.wards.setValue('');
+        comboboxInstances.doctors.setValue('');
+        comboboxInstances.sonos.setValue([]);
+        comboboxInstances.errors.setValue([]);
+
+        currentFormPhotos = [];
+        renderFormPhotoPreviews();
+        setNowDateTime();
+    }
+
+    function editRecord(id) {
+        const rec = allRecords.find(r => r.id === id);
+        if (!rec) return;
+
+        document.getElementById('editRecordId').value = rec.id;
+        document.getElementById('shamsiDate').value = rec.shamsiDate;
+        document.getElementById('recordTime').value = rec.recordTime;
+        document.getElementById('patientName').value = rec.patientName;
+        document.getElementById('fileNumber').value = rec.fileNumber || '';
+
+        comboboxInstances.wards.setValue(rec.ward);
+        comboboxInstances.doctors.setValue(rec.doctor);
+        comboboxInstances.sonos.setValue(rec.sonos);
+        comboboxInstances.errors.setValue(rec.errors);
+
+        document.getElementById('fastingHours').value = rec.fastingHours || '';
+        document.getElementById('delayMinutes').value = rec.delayMinutes || '';
+        document.getElementById('historyText').value = rec.historyText || '';
+        document.getElementById('errorOutcome').value = rec.outcome || 'انجام با تاخیر و اتلاف وقت واحد';
+        document.getElementById('extraNotes').value = rec.extraNotes || '';
+
+        currentFormPhotos = [...(rec.photos || [])];
+        renderFormPhotoPreviews();
+
+        document.getElementById('form-title').innerText = `✏️ در حال ویرایش پرونده: ${rec.patientName}`;
+        document.getElementById('submitBtn').innerText = '💾 ذخیره تغییرات';
+        document.getElementById('cancelEditBtn').style.display = 'inline-flex';
+
+        switchTab('sec-form', document.querySelectorAll('.nav-tab')[0]);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function deleteRecord(id) {
+        if (!confirm('آیا از حذف این مورد اطمینان دارید؟')) return;
+        await deleteRecordFromDB(id);
+        await loadAllRecordsFromDB();
+        renderTable();
+        renderDashboard();
+        showToast('رکورد حذف شد');
+        triggerAutoSyncIfNeeded();
+    }
+
+    /**************************************************************
+     * ۵. فیلتر زمانی، جدول سوابق و داشبورد آماری
+     **************************************************************/
+    function filterByPeriod(records, period) {
+        if (period === 'all') return records;
+        const now = new Date();
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+        const todayShamsi = new Intl.DateTimeFormat('fa-IR', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);
+
+        return records.filter(r => {
+            if (period === 'daily') {
+                return r.timestamp >= startOfToday || r.shamsiDate === todayShamsi;
+            }
+            if (period === 'weekly') {
+                return r.timestamp >= (Date.now() - 7 * 24 * 3600 * 1000);
+            }
+            if (period === 'monthly') {
+                return r.timestamp >= (Date.now() - 30 * 24 * 3600 * 1000);
+            }
+            return true;
+        });
+    }
+
+    function getFilteredTableRecords() {
+        const period = document.getElementById('filterPeriod').value;
+        const ward = document.getElementById('filterWard').value;
+        const error = document.getElementById('filterError').value;
+        const search = document.getElementById('filterSearch').value.trim().toLowerCase();
+
+        let list = filterByPeriod(allRecords, period);
+
+        if (ward) list = list.filter(r => r.ward === ward);
+        if (error) list = list.filter(r => r.errors.includes(error));
+        if (search) {
+            list = list.filter(r =>
+                r.patientName.toLowerCase().includes(search) ||
+                (r.fileNumber && r.fileNumber.toLowerCase().includes(search)) ||
+                r.doctor.toLowerCase().includes(search) ||
+                r.shamsiDate.includes(search) ||
+                (r.extraNotes && r.extraNotes.toLowerCase().includes(search)) ||
+                (r.historyText && r.historyText.toLowerCase().includes(search))
+            );
+        }
+        return list;
+    }
+
+    function formatDetailsColumn(rec) {
+        let parts = [];
+        if (rec.fastingHours) parts.push(`<strong>ناشتایی:</strong> ${rec.fastingHours} ساعت`);
+        if (rec.delayMinutes) parts.push(`<strong>تاخیر:</strong> ${rec.delayMinutes} دقیقه`);
+        if (rec.historyText) parts.push(`<strong>شرح‌حال:</strong> ${rec.historyText}`);
+        if (rec.extraNotes) parts.push(`<strong>یادداشت:</strong> ${rec.extraNotes}`);
+        return parts.length ? parts.join('<br>') : '<span style="color:var(--text-muted)">—</span>';
+    }
+
+    function renderTable() {
+        const list = getFilteredTableRecords();
+        const tbody = document.getElementById('recordsTableBody');
+
+        if (!list.length) {
+            tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding: 2rem; color: var(--text-muted);">هیچ موردی مطابق با فیلترهای انتخابی یافت نشد.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = list.map((rec, idx) => `
+            <tr>
+                <td>${idx + 1}</td>
+                <td>
+                    <div><strong>${rec.shamsiDate}</strong></div>
+                    <div style="font-size:0.8rem; color:var(--text-muted);">ساعت ${rec.recordTime}</div>
+                </td>
+                <td>
+                    <div><strong>${rec.patientName}</strong></div>
+                    ${rec.fileNumber ? `<div style="font-size:0.78rem; color:var(--text-muted);">پرونده: ${rec.fileNumber}</div>` : ''}
+                </td>
+                <td><span class="badge badge-ward">${rec.ward}</span></td>
+                <td>${rec.doctor}</td>
+                <td>${rec.sonos.map(s => `<span class="badge badge-sono">${s}</span>`).join('')}</td>
+                <td>${rec.errors.map(e => `<span class="badge badge-err">${e}</span>`).join('')}</td>
+                <td style="max-width: 240px; font-size: 0.84rem;">${formatDetailsColumn(rec)}</td>
+                <td><span class="badge badge-outcome">${rec.outcome || '—'}</span></td>
+                <td>
+                    ${(rec.photos && rec.photos.length) ? rec.photos.map((p) => `
+                        <img src="${p}" onclick="openPhotoModal('${p}', '${rec.patientName.replace(/'/g, "\\'")} - ${rec.ward.replace(/'/g, "\\'")}')"
+                             style="width:38px; height:38px; object-fit:cover; border-radius:6px; cursor:pointer; border:1px solid #cbd5e1; margin:2px;" title="مشاهده تصویر">
+                    `).join('') : '—'}
+                </td>
+                <td class="no-print">
+                    <div style="display:flex; gap:4px;">
+                        <button class="btn btn-secondary btn-sm" onclick="editRecord('${rec.id}')" title="ویرایش">✏️</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteRecord('${rec.id}')" title="حذف">🗑️</button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function setStatsPeriod(period, btn) {
+        currentStatsPeriod = period;
+        document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderDashboard();
+    }
+
+    function renderBarChart(containerId, countsObj, isErrorColor = false) {
+        const container = document.getElementById(containerId);
+        const entries = Object.entries(countsObj).sort((a, b) => b[1] - a[1]);
+
+        if (!entries.length) {
+            container.innerHTML = `<div style="color:var(--text-muted); font-size:0.88rem; padding:1rem 0;">داده‌ای برای نمایش وجود ندارد.</div>`;
+            return;
+        }
+
+        const maxVal = entries[0][1];
+        container.innerHTML = entries.map(([label, count]) => {
+            const pct = Math.round((count / maxVal) * 100);
+            return `
+                <div class="bar-chart-row">
+                    <div class="bar-chart-label">
+                        <span>${label}</span>
+                        <span>${count} مورد</span>
+                    </div>
+                    <div class="bar-chart-track">
+                        <div class="bar-chart-fill ${isErrorColor ? 'error-color' : ''}" style="width: ${pct}%"></div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function renderDashboard() {
+        const list = filterByPeriod(allRecords, currentStatsPeriod);
+        document.getElementById('kpi-total').innerText = list.length;
+
+        const wardCounts = {};
+        const errorCounts = {};
+        const outcomeCounts = {};
+        const sonoCounts = {};
+
+        let totalDelay = 0, delayCount = 0;
+        let totalFasting = 0, fastingCount = 0;
+
+        list.forEach(r => {
+            wardCounts[r.ward] = (wardCounts[r.ward] || 0) + 1;
+            if (r.outcome) outcomeCounts[r.outcome] = (outcomeCounts[r.outcome] || 0) + 1;
+            r.errors.forEach(e => errorCounts[e] = (errorCounts[e] || 0) + 1);
+            r.sonos.forEach(s => sonoCounts[s] = (sonoCounts[s] || 0) + 1);
+
+            if (r.delayMinutes) { totalDelay += r.delayMinutes; delayCount++; }
+            if (r.fastingHours) { totalFasting += r.fastingHours; fastingCount++; }
+        });
+
+        const topWards = Object.entries(wardCounts).sort((a, b) => b[1] - a[1]);
+        if (topWards.length) {
+            document.getElementById('kpi-top-ward').innerText = topWards[0][0];
+            document.getElementById('kpi-top-ward-count').innerText = `${topWards[0][1]} مورد خطای ثبت‌شده`;
+        } else {
+            document.getElementById('kpi-top-ward').innerText = '—';
+            document.getElementById('kpi-top-ward-count').innerText = '۰ مورد';
+        }
+
+        document.getElementById('kpi-avg-delay').innerText = delayCount ? `${Math.round(totalDelay / delayCount)} دقیقه` : '۰ دقیقه';
+        document.getElementById('kpi-avg-fasting').innerText = fastingCount ? `${(totalFasting / fastingCount).toFixed(1)} ساعت` : '۰ ساعت';
+
+        renderBarChart('chart-wards', wardCounts, false);
+        renderBarChart('chart-errors', errorCounts, true);
+        renderBarChart('chart-outcomes', outcomeCounts, false);
+        renderBarChart('chart-sonos', sonoCounts, false);
+    }
+
+    /**************************************************************
+     * ۶. خروجی اکسل، پشتیبان‌گیری فایلی و همگام‌سازی ابری گیت‌هاب
+     **************************************************************/
+    function exportToExcel() {
+        const list = getFilteredTableRecords();
+        if (!list.length) return alert('رکوردی برای خروجی گرفتن وجود ندارد.');
+
+        const headers = [
+            "ردیف", "تاریخ", "ساعت", "نام بیمار", "شماره پرونده", "نام بخش",
+            "پزشک معالج", "نوع سونوگرافی", "نوع اشتباه", "ساعت ناشتایی",
+            "دقیقه تاخیر انتقال", "شرح حال اخذ شده", "نتیجه / پیامد", "توضیحات تکمیلی", "تعداد عکس پیوست"
+        ];
+
+        const escapeCSV = (val) => {
+            if (val === null || val === undefined) return '""';
+            const str = String(val).replace(/"/g, '""');
+            return `"${str}"`;
+        };
+
+        const rows = list.map((r, i) => [
+            i + 1,
+            r.shamsiDate,
+            r.recordTime,
+            r.patientName,
+            r.fileNumber || '',
+            r.ward,
+            r.doctor,
+            r.sonos.join(' | '),
+            r.errors.join(' | '),
+            r.fastingHours || '',
+            r.delayMinutes || '',
+            r.historyText || '',
+            r.outcome || '',
+            r.extraNotes || '',
+            (r.photos ? r.photos.length : 0)
+        ].map(escapeCSV).join(','));
+
+        const csvContent = '\uFEFF' + [headers.map(escapeCSV).join(','), ...rows].join('\r\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Sonography-Errors-${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('فایل اکسل با موفقیت دانلود شد');
+    }
+
+    function downloadBackup() {
+        const data = {
+            lists: appLists,
+            records: allRecords,
+            exportedAt: new Date().toISOString()
+        };
+        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Sonography-Backup-${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('فایل پشتیبان دانلود شد');
+    }
+
+    async function mergeExternalData(data) {
+        if (data.lists) {
+            for (let key of ['wards', 'sonos', 'errors', 'doctors']) {
+                if (Array.isArray(data.lists[key])) {
+                    appLists[key] = [...new Set([...(appLists[key] || []), ...data.lists[key]])];
+                }
+            }
+            saveLists();
+        }
+        if (Array.isArray(data.records)) {
+            const localMap = new Map(allRecords.map(r => [r.id, r]));
+            for (const rec of data.records) {
+                const existing = localMap.get(rec.id);
+                if (!existing || (rec.updatedAt || rec.timestamp || 0) >= (existing.updatedAt || existing.timestamp || 0)) {
+                    await putRecordInDB(rec);
+                }
+            }
+            await loadAllRecordsFromDB();
+            renderTable();
+            renderDashboard();
+        }
+    }
+
+    function restoreBackup(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                await mergeExternalData(data);
+                showToast('اطلاعات با موفقیت بازیابی و ادغام شد');
+                triggerAutoSyncIfNeeded();
+            } catch (err) {
+                alert('فایل پشتیبان معتبر نیست.');
+            }
+        };
+        reader.readAsText(file);
+        event.target.value = '';
+    }
+
+    // --- GitHub Cloud Sync ---
+    function loadGitHubConfig() {
+        const saved = localStorage.getItem('sono_gh_config');
+        let cfg = saved ? JSON.parse(saved) : {};
+
+        // تشخیص خودکار نام کاربری و مخزن در صورت اجرا روی GitHub Pages
+        if (!cfg.repo && window.location.hostname.endsWith('.github.io')) {
+            const owner = window.location.hostname.split('.')[0];
+            const pathParts = window.location.pathname.split('/').filter(Boolean);
+            if (owner && pathParts.length > 0) {
+                cfg.repo = `${owner}/${pathParts[0]}`;
+            }
+        }
+
+        document.getElementById('ghRepo').value = cfg.repo || '';
+        document.getElementById('ghToken').value = cfg.token || '';
+        document.getElementById('ghBranch').value = cfg.branch || 'main';
+        document.getElementById('ghFilePath').value = cfg.filePath || 'data/sonography-db.json';
+        document.getElementById('ghAutoSync').checked = !!cfg.autoSync;
+        return cfg;
+    }
+
+    function saveGitHubConfig(showMsg = false) {
+        const cfg = {
+            repo: document.getElementById('ghRepo').value.trim(),
+            token: document.getElementById('ghToken').value.trim(),
+            branch: document.getElementById('ghBranch').value.trim() || 'main',
+            filePath: document.getElementById('ghFilePath').value.trim() || 'data/sonography-db.json',
+            autoSync: document.getElementById('ghAutoSync').checked
+        };
+        localStorage.setItem('sono_gh_config', JSON.stringify(cfg));
+        if (showMsg) showToast('تنظیمات همگام‌سازی گیت‌هاب ذخیره شد');
+        return cfg;
+    }
+
+    function utf8ToBase64(str) {
+        const bytes = new TextEncoder().encode(str);
+        const chunkSize = 0x8000;
+        let binary = '';
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+            binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+        }
+        return btoa(binary);
+    }
+
+    function setSyncStatus(msg, isError = false) {
+        const box = document.getElementById('syncStatusBox');
+        box.style.display = 'block';
+        box.style.background = isError ? 'var(--danger-bg)' : 'var(--primary-bg)';
+        box.style.color = isError ? 'var(--danger)' : 'var(--primary)';
+        box.style.borderColor = isError ? '#fecaca' : '#99f6e4';
+        box.innerText = msg;
+    }
+
+    async function quickGitHubSync() {
+        const cfg = saveGitHubConfig(false);
+        if (!cfg.repo || !cfg.token) {
+            switchTab('sec-settings', document.querySelectorAll('.nav-tab')[3]);
+            setSyncStatus('لطفاً ابتدا نام مخزن (Owner/Repo) و توکن گیت‌هاب خود را در فرم بالا وارد و ذخیره کنید.', true);
+            return;
+        }
+        await syncWithGitHub('smart');
+    }
+
+    async function triggerAutoSyncIfNeeded() {
+        const cfg = loadGitHubConfig();
+        if (cfg.autoSync && cfg.repo && cfg.token && navigator.onLine) {
+            await syncWithGitHub('smart', true);
+        }
+    }
+
+    async function syncWithGitHub(mode = 'smart', silent = false) {
+        const cfg = saveGitHubConfig(false);
+        if (!cfg.repo || !cfg.token) {
+            if (!silent) alert('لطفاً نام مخزن (Owner/Repo) و توکن دسترسی گیت‌هاب را وارد کنید.');
+            return;
+        }
+
+        const headerLabel = document.getElementById('headerSyncLabel');
+        headerLabel.innerText = 'در حال سینک...';
+        if (!silent) setSyncStatus('⏳ در حال ارتباط با سرور گیت‌هاب...');
+
+        const apiUrl = `https://api.github.com/repos/${cfg.repo}/contents/${cfg.filePath}`;
+        const headers = {
+            'Authorization': `Bearer ${cfg.token}`,
+            'Accept': 'application/vnd.github.v3+json'
+        };
+
+        try {
+            let remoteSha = null;
+            let remoteData = null;
+
+            // ۱. بررسی وجود فایل در مخزن گیت‌هاب و دریافت SHA
+            const metaRes = await fetch(`${apiUrl}?ref=${encodeURIComponent(cfg.branch)}`, { headers, cache: 'no-store' });
+            if (metaRes.status === 200) {
+                const metaJson = await metaRes.json();
+                remoteSha = metaJson.sha;
+
+                // دریافت محتوای خام JSON در حالت Pull یا Smart Merge
+                if (mode === 'pull' || mode === 'smart') {
+                    const rawRes = await fetch(`${apiUrl}?ref=${encodeURIComponent(cfg.branch)}`, {
+                        headers: {
+                            'Authorization': `Bearer ${cfg.token}`,
+                            'Accept': 'application/vnd.github.v3.raw'
+                        },
+                        cache: 'no-store'
+                    });
+                    if (rawRes.ok) {
+                        remoteData = await rawRes.json();
+                    }
+                }
+            } else if (metaRes.status !== 404) {
+                throw new Error(`خطای دسترسی به گیت‌هاب (کد ${metaRes.status}). نام مخزن یا توکن را بررسی کنید.`);
+            }
+
+            // ۲. ادغام اطلاعات دریافتی از گیت‌هاب با دیتابیس محلی
+            if ((mode === 'pull' || mode === 'smart') && remoteData) {
+                await mergeExternalData(remoteData);
+            }
+
+            // ۳. ارسال اطلاعات نهایی به گیت‌هاب در حالت Push یا Smart Merge
+            if (mode === 'push' || mode === 'smart') {
+                const payloadObj = {
+                    lists: appLists,
+                    records: allRecords,
+                    updatedAt: new Date().toISOString()
+                };
+                const base64Content = utf8ToBase64(JSON.stringify(payloadObj));
+
+                const putBody = {
+                    message: `Sync sonography records (${allRecords.length} items) - ${new Date().toLocaleDateString('fa-IR')}`,
+                    content: base64Content,
+                    branch: cfg.branch
+                };
+                if (remoteSha) putBody.sha = remoteSha;
+
+                const putRes = await fetch(apiUrl, {
+                    method: 'PUT',
+                    headers: {
+                        ...headers,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(putBody)
+                });
+
+                if (!putRes.ok) {
+                    const errData = await putRes.json().catch(() => ({}));
+                    throw new Error(errData.message || `خطا در ذخیره فایل در گیت‌هاب (کد ${putRes.status})`);
+                }
+            }
+
+            const nowTime = new Intl.DateTimeFormat('fa-IR', { hour: '2-digit', minute: '2-digit' }).format(new Date());
+            headerLabel.innerText = `سینک شد (${nowTime})`;
+            if (!silent) {
+                setSyncStatus(`✅ همگام‌سازی با گیت‌هاب با موفقیت انجام شد (${allRecords.length} رکورد - ساعت ${nowTime}).`);
+                showToast('همگام‌سازی با گیت‌هاب انجام شد');
+            }
+        } catch (err) {
+            headerLabel.innerText = 'خطا در سینک';
+            if (!silent) {
+                setSyncStatus(`❌ ${err.message}`, true);
+                showToast('خطا در همگام‌سازی با گیت‌هاب');
+            }
+        }
+    }
+
+    /**************************************************************
+     * ۷. مدیریت فهرست‌ها، تب‌ها و ابزارهای جانبی
+     **************************************************************/
+    function populateFilterDropdowns() {
+        const fw = document.getElementById('filterWard');
+        const fe = document.getElementById('filterError');
+        const curW = fw.value;
+        const curE = fe.value;
+
+        fw.innerHTML = `<option value="">همه بخش‌ها</option>` + appLists.wards.map(w => `<option value="${w}">${w}</option>`).join('');
+        fe.innerHTML = `<option value="">همه اشتباهات</option>` + appLists.errors.map(e => `<option value="${e}">${e}</option>`).join('');
+
+        fw.value = curW;
+        fe.value = curE;
+    }
+
+    function renderListManager() {
+        ['wards', 'sonos', 'errors', 'doctors'].forEach(key => {
+            const container = document.getElementById('manage-' + key);
+            if (!appLists[key].length) {
+                container.innerHTML = `<span style="color:var(--text-muted); font-size:0.82rem;">موردی ثبت نشده است</span>`;
+                return;
+            }
+            container.innerHTML = appLists[key].map(item => `
+                <div class="list-pill">
+                    <span>${item}</span>
+                    <span style="color:var(--danger); cursor:pointer; font-weight:bold;" onclick="removeListItem('${key}', '${item.replace(/'/g, "\\'")}')" title="حذف از فهرست">×</span>
+                </div>
+            `).join('');
+        });
+    }
+
+    function removeListItem(key, item) {
+        if (!confirm(`آیا «${item}» از فهرست کشویی حذف شود؟ (سوابق قبلی تغییر نمی‌کنند)`)) return;
+        appLists[key] = appLists[key].filter(i => i !== item);
+        saveLists();
+    }
+
+    function switchTab(sectionId, btn) {
+        document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(sectionId).classList.add('active');
+        document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        if (sectionId === 'sec-dashboard') renderDashboard();
+        if (sectionId === 'sec-records') renderTable();
+        if (sectionId === 'sec-settings') renderListManager();
+    }
+
+    function openPhotoModal(src, caption) {
+        document.getElementById('modalImage').src = src;
+        document.getElementById('modalCaption').innerText = caption || 'تصویر مستندات';
+        document.getElementById('photoModal').classList.add('open');
+    }
+
+    function closePhotoModal() {
+        document.getElementById('photoModal').classList.remove('open');
+        document.getElementById('modalImage').src = '';
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+        loadLists();
+        loadGitHubConfig();
+        await initDB();
+        await loadAllRecordsFromDB();
+
+        comboboxInstances.wards = new SmartCombobox('combo-wards', 'wards', false, 'جستجو یا تایپ نام بخش...');
+        comboboxInstances.doctors = new SmartCombobox('combo-doctors', 'doctors', false, 'نام پزشک را تایپ کنید (خودکار ذخیره می‌شود)...');
+        comboboxInstances.sonos = new SmartCombobox('combo-sonos', 'sonos', true, 'انتخاب یک یا چند سونوگرافی...');
+        comboboxInstances.errors = new SmartCombobox('combo-errors', 'errors', true, 'انتخاب یک یا چند خطا...', updateDynamicErrorFields);
+
+        setNowDateTime();
+        populateFilterDropdowns();
+        renderTable();
+        renderDashboard();
+        renderListManager();
+    });
+</script>
+
+</body>
+</html>
