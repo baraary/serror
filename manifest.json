@@ -9,7 +9,7 @@
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#f8fafc",
-  "theme_color": "#0f766e",
+  "theme_color": "#006A60",
   "icons": [
     {
       "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%230f766e'/%3E%3Cpath d='M256 112c-53 0-96 43-96 96v48c0 53 43 96 96 96s96-43 96-96v-48c0-53-43-96-96-96zm-48 96c0-26.5 21.5-48 48-48s48 21.5 48 48v48c0 26.5-21.5 48-48 48s-48-21.5-48-48v-48z' fill='%2399f6e4'/%3E%3Cpath d='M160 384h192v36H160z' fill='%23ffffff'/%3E%3C/svg%3E",
